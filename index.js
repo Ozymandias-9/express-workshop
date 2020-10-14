@@ -1,12 +1,14 @@
 const bodyParser = require('body-parser');
+const morgan = require ('morgan');
 const express = require('express');
 //Importa la libreria de express
 const app = express();
 //Obtener instancia, llama al constructor de express, acceso a express
-const { pokemon } = require('./pokedex.json');
+const pokemon = require('./routes/pokemon');
 
+app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({  extended: true}));
+app.use(bodyParser.urlencoded({  extended: true }));
 /*
 Verbos HTTP:
 recurso: Registro en alguna base de datos
@@ -27,42 +29,9 @@ app.get("/", (req,res,next) =>{
 req: Peticion del cliente (request)
 res: La respuesta que vamos a dar (response)
 next: ...
- */
+ */ 
 
-
-app.post("/pokemon", (req,res,next) => {
-    return res.status(200).send(req.body);
-})
-
-app.get("/pokemon",(req,res,next) => {
-//    console.log(req.params.name);
-    res.status(200).send(pokemon);
-});
-//res.status(200).send(cosa)
-
-app.get('/pokemon/:id([0-9]{1,3})', (req,res,next) => {
-    const id = req.params.id-1;
-    (id >= 0 && id <= 150) ? 
-        res.status(200).send(pokemon[req.params.id - 1]) :
-        res.status(404).send("Pokémon no encontrado.");
-    
-});
-
-app.get('/pokemon/:name([A-Za-z]+)', (req, res, next) => {
-    const name = req.params.name;
-
-    const pk = pokemon.filter((p)=>{
-            return (p.name.toUpperCase() == name.toUpperCase()) && p;
-        });
-
-        console.log(pk);
-
-        (pk.length>0) ? 
-        res.status(200).send(pk) : 
-        res.status(404).send("Pokémon no encontrado.");
-    
-});
-
+app.use("/pokemon",pokemon);
 
 app.listen(process.env.PORT || 3000, () => {
 console.log("Server is running...");
