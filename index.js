@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser');
 const morgan = require ('morgan');
 const express = require('express');
 //Importa la libreria de express
@@ -7,8 +6,10 @@ const app = express();
 const pokemon = require('./routes/pokemon');
 
 app.use(morgan('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({  extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({  extended: true }));
 /*
 Verbos HTTP:
 recurso: Registro en alguna base de datos
@@ -20,7 +21,7 @@ DELETE: Eliminar un recurso
 */
 
 app.get("/", (req,res,next) =>{
-    res.send("Bienvenido al Pokedex");
+    res.send(200).json({ code: 1, message: "Bienvenido al Pokédex"});
 })
 
 //Primer parametro, URL que va a recibir 
@@ -32,6 +33,10 @@ next: ...
  */ 
 
 app.use("/pokemon",pokemon);
+
+app.use((req,res,next) => {
+    return res.status(404).json({ code: 404, message: "URL not found"});
+});
 
 app.listen(process.env.PORT || 3000, () => {
 console.log("Server is running...");
