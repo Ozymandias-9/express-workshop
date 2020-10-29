@@ -64,7 +64,6 @@ pokemon.get("/", async (req,res,next) => {
     const pkmn = await db.query("SELECT * FROM pokemon");
     return res.status(200).json({ code: 1, message: pkmn });
 });
-//res.status(200).send(cosa)
 
 pokemon.get('/:id([0-9]{1,3})', async (req,res,next) => {
     const id = req.params.id-1;

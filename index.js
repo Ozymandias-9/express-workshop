@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 //Obtener instancia, llama al constructor de express, acceso a express
 const pokemon = require('./routes/pokemon');
+const user = require ('./routes/user');
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -33,6 +34,7 @@ next: ...
  */ 
 
 app.use("/pokemon",pokemon);
+app.use("/user",user);
 
 app.use((req,res,next) => {
     return res.status(404).json({ code: 404, message: "URL not found"});
