@@ -1,10 +1,16 @@
+//Dependencias
 const morgan = require ('morgan');
 const express = require('express');
 //Importa la libreria de express
 const app = express();
 //Obtener instancia, llama al constructor de express, acceso a express
+//Routers
 const pokemon = require('./routes/pokemon');
 const user = require ('./routes/user');
+//Middleware
+const auth = require ('./middleware/auth');
+const notFound = require ('./middleware/notFound');
+const index = require ('./middleware/index')
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -21,9 +27,7 @@ PATCH: Actualización de un dato de un recurso
 DELETE: Eliminar un recurso
 */
 
-app.get("/", (req,res,next) =>{
-    res.send(200).json({ code: 1, message: "Bienvenido al Pokédex"});
-})
+app.get("/", index);
 
 //Primer parametro, URL que va a recibir 
 //Segundo parametro, funcion a ejectuar
@@ -32,13 +36,13 @@ req: Peticion del cliente (request)
 res: La respuesta que vamos a dar (response)
 next: ...
  */ 
-
-app.use("/pokemon",pokemon);
 app.use("/user",user);
 
-app.use((req,res,next) => {
-    return res.status(404).json({ code: 404, message: "URL not found"});
-});
+app.use(auth);
+
+app.use("/pokemon",pokemon);
+
+app.use(notFound);
 
 app.listen(process.env.PORT || 3000, () => {
 console.log("Server is running...");
